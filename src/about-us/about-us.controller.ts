@@ -2,7 +2,7 @@ import {
   Controller, 
   Get, 
   Post, 
-  Put, 
+  Patch, 
   Delete, 
   UseInterceptors, 
   UploadedFile, 
@@ -54,8 +54,14 @@ export class AboutUsController {
     return this.aboutUsService.findAll();
   }
 
-  // ✅ UPDATE (PUT)
-  @Put(':id')
+  @Get(':id')
+async getAboutUsById(@Param('id') id: string) {
+    return this.aboutUsService.getById(id);
+}
+
+
+  // ✅ UPDATE (Patch)
+  @Patch(':id')
   @ApiResponse({ status: 200, description: 'Muvaffaqiyatli yangilandi', type: AboutUs })
   @UseInterceptors(
     FileInterceptor('aboutImg', {

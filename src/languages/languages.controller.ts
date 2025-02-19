@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch } from '@nestjs/common';
 import { LanguageService } from './languages.service';
 import { CreateLanguageDto } from './dto/create-language.dto';
 import { Language } from './entities/language.entity';
@@ -37,7 +37,7 @@ export class LanguageController {
     return language;
   }
 
-  @Put(':id')
+  @Patch(':id')
   @ApiOperation({ summary: 'Update a language by id' })
   @ApiResponse({ status: 200, description: 'Language successfully updated', type: Language })
   @ApiResponse({ status: 404, description: 'Language not found' })

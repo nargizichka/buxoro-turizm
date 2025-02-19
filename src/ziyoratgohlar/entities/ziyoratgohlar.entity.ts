@@ -14,26 +14,26 @@ export class Ziyoratgoh {
       en: 'string',
       ru: 'string',
       sa: 'string',
-      tk: 'string',
+      tr: 'string',
     },
     type: String,
   })
-  name: { uz: string; en: string; ru: string; sa: string; tk: string };
+  name: { uz: string; en: string; ru: string; sa: string; tr: string };
 
   @Prop({ type: Object, required: true })
   @ApiProperty({
-    description: 'Ziyoratgohning tavsifi',
+    description: 'Ziyoratgohning tavsifi (Draft.js JSON obyekti)',
     example: {
-      uz: 'string',
-      en: 'string',
-      ru: 'string',
-      sa: 'string',
-      tk: 'string',
+      uz: {},
+      en: {},
+      ru: {},
+      sa: {},
+      tr: {},
     },
-    type: String,
+    type: Object,
   })
-  description: { uz: string; en: string; ru: string; sa: string; tk: string };
-
+  description: Record<string, any>;
+  
   @Prop()
   @ApiProperty({
     description: 'Ziyoratgohning nomi',

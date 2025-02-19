@@ -2,7 +2,7 @@ import {
   Controller,
   Post,
   Get,
-  Put,
+  Patch,
   Delete,
   Param,
   UploadedFiles,
@@ -56,14 +56,14 @@ export class ZiyoratgohlarController {
         en: body['name.en'],
         ru: body['name.ru'],
         sa: body['name.sa'],
-        tk: body['name.tk'],
+        tr: body['name.tr'],
       },
       description: {
         uz: body['description.uz'],
         en: body['description.en'],
         ru: body['description.ru'],
         sa: body['description.sa'],
-        tk: body['description.tk'],
+        tr: body['description.tr'],
       },
       threeD: body['threeD'] || null,
       location: body['location'] || null,
@@ -122,17 +122,52 @@ export class ZiyoratgohlarController {
     return await this.model.findById(id);
   }
 
-  // 📌 [PUT] - Yangilash
-  @Put(':id')
-  @ApiOperation({ summary: 'Ziyoratgohni yangilash' })
-  @ApiResponse({ status: 200, description: 'Ziyoratgoh muvaffaqiyatli yangilandi.', type: Ziyoratgoh, })
-  async update(@Param('id') id: string, @Body() body: any) {
-    const updatedZiyoratgoh = await this.model.findByIdAndUpdate(id, body, { new: true });
-    return {
-      message: 'Muvaffaqiyatli yangilandi!',
-      data: updatedZiyoratgoh
-    };
+  // 📌 [Patch] - Yangilash
+  @Patch(':id')
+  @Patch(':id')
+@UseInterceptors(
+  FileFieldsInterceptor([
+    { name: 'mainImage', maxCount: 1 },
+    { name: 'additionalImages', maxCount: 15 },
+  ], {
+    storage: diskStorage({
+      destination: './uploads',
+      filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
+      },
+    }),
+  })
+)
+async update(
+  @Param('id') id: string,
+  @UploadedFiles() files: { mainImage?: Express.Multer.File[], additionalImages?: Express.Multer.File[] },
+  @Body() body: any
+) {
+  const ziyoratgoh = await this.model.findById(id);
+  if (!ziyoratgoh) {
+    throw new BadRequestException('Ziyoratgoh topilmadi');
   }
+
+  // Eski rasm nomlarini saqlab qolish (agar frontenddan yuborilgan bo'lsa)
+  const existingImages = body.existingImages ? JSON.parse(body.existingImages) : [];
+
+  // Yangi rasmlar yuklangan bo'lsa, ularni qo'shish
+  const updatedData = {
+    ...body,
+    mainImage: files.mainImage?.[0]?.filename || ziyoratgoh.mainImage, // Yangi yuklangan bo'lsa almashtirish
+    additionalImages: [...existingImages, ...(files.additionalImages?.map(file => file.filename) || [])] // Eski + yangi rasmlar
+  };
+
+  const updatedZiyoratgoh = await this.model.findByIdAndUpdate(id, updatedData, { new: true });
+
+  return {
+    message: 'Muvaffaqiyatli yangilandi!',
+    data: updatedZiyoratgoh
+  };
+}
+
+  
 
   // 📌 [DELETE] - O‘chirish
   @Delete(':id')

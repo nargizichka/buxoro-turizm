@@ -7,6 +7,8 @@ import { LoggerMiddleware } from './logger.middleware';
 import { AboutUsModule } from './about-us/about-us.module';
 import { VisitModule } from './visit/visit.module';
 import { LanguageModule } from './languages/languages.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 
 @Module({
@@ -16,6 +18,10 @@ import { LanguageModule } from './languages/languages.module';
     AboutUsModule,
     VisitModule,
     LanguageModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'), 
+      serveRoot: '/uploads',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

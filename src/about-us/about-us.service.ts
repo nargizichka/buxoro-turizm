@@ -25,6 +25,15 @@ export class AboutUsService {
     return aboutUs;
   }
 
+  async getById(id: string): Promise<AboutUs> {
+    const aboutUs = await this.aboutUsModel.findById(id);
+    if (!aboutUs) {
+        throw new NotFoundException('About Us not found');
+    }
+    return aboutUs;
+}
+
+
   // ✅ UPDATE (Yangilash)
   async update(id: string, updateData: Partial<CreateAboutUsDto>) {
     const aboutUs = await this.aboutUsModel.findById(id);

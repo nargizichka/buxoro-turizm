@@ -15,5 +15,5 @@ export class CreateZiyoratgohDto {
 
   @IsString()
   @IsOptional()
-  youtubeLink: string;
+  youtubeLink?: string;
 }
